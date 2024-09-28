@@ -38,7 +38,6 @@ def evaluate_global_model(model):
     print(f'Perplexity: {perplexity:.2f}, Accuracy: {accuracy:.2f}%')
 
 
-
 class WikiTextDataset(Dataset):
     def __init__(self, texts, tokenizer):
         self.tokenizer = tokenizer
@@ -55,14 +54,12 @@ class WikiTextDataset(Dataset):
     def __getitem__(self, idx):
         return self.inputs[idx], self.labels[idx]
 
-def get_node_data(node_id):
-    # Partition the dataset
+def get_node_data(node_id): # partition the dataset
     node_texts = partitioned_texts[node_id]
     dataset = WikiTextDataset(node_texts, tokenizer)
     return dataset
 
-def test_data_loader():
-    # Create data loader for the test dataset
+def test_data_loader(): # create data loader for the test dataset
     dataset = WikiTextDataset(test_texts, tokenizer)
     loader = DataLoader(dataset, batch_size=32, shuffle=False)
     return loader
