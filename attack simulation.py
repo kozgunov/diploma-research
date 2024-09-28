@@ -1,4 +1,3 @@
-# In the Node class
 async def local_training(self, epochs=1):
     self.initialize_model_state()
     self.model.train()
@@ -11,8 +10,7 @@ async def local_training(self, epochs=1):
             self.optimizer.step()
     delta_w = self.get_model_updates()
     if self.is_malicious:
-        # Modify updates to poison the model
         for name in delta_w:
-            delta_w[name] = delta_w[name] * 10  # Exaggerate the updates
+            delta_w[name] = delta_w[name] * 10 
     encrypted_updates = self.encrypt_updates(delta_w)
     return encrypted_updates
