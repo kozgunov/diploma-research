@@ -1,4 +1,4 @@
-async def local_training(self, epochs=1):
+async def local_training(self, epochs=1): # for 1/10 epochs (later updated by optuna)
     self.initialize_model_state()
     self.model.train()
     for epoch in range(epochs):
