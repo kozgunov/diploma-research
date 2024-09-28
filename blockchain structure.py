@@ -6,5 +6,5 @@ class Blockchain:
         self.chain.append(block)
 
     def validate_chain(self):
-        # Implement chain validation logic
+        # implement chain validation logic
         pass
