@@ -27,7 +27,7 @@ async def main():
 
     for epoch in range(epochs):
         print(f"--- Training epoch {epoch + 1}  started ---")
-        consensus_tasks = [node.participate_in_consensus(nodes) for node in nodes]  # Nodes participate in consensus for block creation
+        consensus_tasks = [node.participate_in_consensus(nodes) for node in nodes]  # nodes take part in consensus for block creation
         await asyncio.gather(*consensus_tasks)
 
         training_tasks = [node.send_updates(aggregator) for node in nodes]  # local training and sending their updates
