@@ -4,17 +4,11 @@ from blake3 import blake3
 import random
 import torch
 import torch.nn as nn
+from crypto.Signature import pkcs1_15
 from torch.utils.data import DataLoader
 
-def proof_of_work(block_header, difficulty):
-    nonce = 0
-    target = '0' * difficulty
-    while True:
-        hash_result = blake3(f"{block_header}{nonce}".encode()).hexdigest()
-        if hash_result[:difficulty] == target:
-            return nonce, hash_result
-        else:
-            nonce += 1
+
+
 
 
 def encrypt_updates(delta_w):  # encrypt the model updates
@@ -50,6 +44,7 @@ def apply_differential_privacy(delta_w):
 
 class Node:
     def __init__(self, node_id, stake, data, model, is_malicious=False):
+        self.epochs = 1 # initial number of epochs, implying quite many nodes in the beginning
         self.node_id = node_id
         self.stake = stake
         self.data = data  # local dataset
@@ -66,6 +61,8 @@ class Node:
         self.blockchain = []  # local copy of the blockchain
         self.vdf_output = None  # for PoT
         self.initial_model_state = None  # store model state before training
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.95)
+        self.previous_hash = '0' * 64 # initial prev.hash
 
     def generate_keys(self):  # generate RSA key pair for digital signatures
         key = RSA.generate(2048)
@@ -84,7 +81,10 @@ class Node:
                 outputs = self.model(inputs)
                 loss = self.loss_fn(outputs.view(-1, outputs.size(-1)), labels.view(-1))
                 loss.backward()
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
                 self.optimizer.step()
+                self.scheduler.step()
+                self.optimizer.zero_grad()
         delta_w = self.get_model_updates()
         if self.is_malicious:  # check poisoning data attack
             for name in delta_w:
@@ -100,6 +100,7 @@ class Node:
 
     def data_loader(self):  # simulate loading data
         dataset = self.data
+        random.shuffle(self.data) # randomize it
         indices = list(range(len(dataset)))
         random.shuffle(indices)
         for start_idx in range(0, len(dataset), self.batch_size):
@@ -124,7 +125,7 @@ class Node:
         return delta_w
 
     async def send_updates(self, aggregator):
-        encrypted_updates = await self.local_training()
+        encrypted_updates = await self.local_training(epochs=self.epochs)
         await aggregator.receive_updates(self.node_id, encrypted_updates)
 
     async def create_block(self, all_nodes):  # simulate VDF for PoT
@@ -134,7 +135,7 @@ class Node:
         target = int(1e75)  # adjusted difficulty
         difficulty = 4  # number of leading zeros
         block_header = f"{self.node_id}{self.vdf_output}{self.previous_hash}"
-        nonce, block_hash = proof_of_work(block_header, difficulty)
+        nonce, block_hash = self.proof_of_work(block_header, difficulty)
 
         # create block
         block = {
@@ -143,6 +144,7 @@ class Node:
             'nonce': nonce,  # NEVER TOUCH IT
             'hash': block_hash,
             'transactions': [],  # for cryptoproducts realization
+            #'previous_hash': self.previous_hash,
             'previous_hash': self.blockchain[-1]['hash'] if self.blockchain else None,
         }
         block['hash'] = blake3(str(block).encode()).hexdigest()
@@ -154,51 +156,69 @@ class Node:
         self.blockchain.append(block)  # add block to own blockchain
 
     def receive_block(self, block):  # validate the block
-        if validate_block(block):
+        if self.validate_block(block):
             self.blockchain.append(block)
+            self.previous_hash = block['hash']  # Update previous hash
         else:
             print(f"Node {self.node_id}: Invalid block received from Node {block['creator']}")
 
     def set_global_model(self, global_model_state):  # update the local model with global one
         self.model.load_state_dict(global_model_state)
 
-    def update_reputations(self, node, comment): #upgrade/downgrade of reputation
+    def update_reputations(self, node, comment): #upgrade/downgrade of reputation for PoR
             if comment == 'malicious':
-                self.reputation -= 2
-                self.reputation = max(0, self.reputation)
+                self.reputation = max(0, int(self.reputation - 3))
                 print('node is malicious')
             elif comment == 'honest':
                 self.reputation += 1
                 print('node is honest')
+
+    def proof_of_work(self, block_header, difficulty):
+        nonce = 0
+        target = '0' * difficulty
+        while True:
+            hash_result = blake3(f"{block_header}{nonce}".encode()).hexdigest()
+            if hash_result[:difficulty] == target:
+                return nonce, hash_result
+            else:
+                nonce += 1
+
+    def validate_block(self, block):  # validate previous hash
+        if block['previous_hash'] != self.previous_hash:
+            return False
+        if not self.signature_verification(block):  # validate signature
+            return False
+        if not self.validate_proof_of_work(block):  # validate Proof-of-Work
+            return False
+        return True
+
+    def signature_verification(self, block):
+        creator_public_key = self.get_public_key(block['creator'])
+        message = str(block['data']).encode()   # prepare the message
+        h = blake3.new(message) # encrypt this massage
+        try:
+            pkcs1_15.new(creator_public_key).verify(h, block['signature'])
+            return True
+        except (ValueError, TypeError):
+            return False
+
+    def validate_proof_of_work(self, block):
+        block_header = f"{block['creator']}{block['vdf_output']}{block['previous_hash']}"
+        computed_hash = blake3(f"{block_header}{block['nonce']}".encode()).hexdigest()
+        difficulty = 4
+        target = '0' * difficulty
+        return computed_hash.startswith(target)
+
     async def participate_in_consensus(self, all_nodes):  # PoR selection
         total_stake_reputation = sum(node.stake * node.reputation for node in all_nodes)
         if total_stake_reputation == 0:
             selection_probability = 1 / len(all_nodes)  # exception handling
         else:
-            selection_probability = (self.stake * self.reputation) / total_stake_reputation
-        if random.random() < selection_probability:
-            await self.create_block(all_nodes)
-        else:
-            pass
+            selection_probability = [(self.stake * self.reputation) / total_stake_reputation for node in all_nodes]
+        selected_node = random.choices(all_nodes, weights=selection_probability, k=1)[0]
+        return selected_node
 
-    ''' signature 
-    
-    def sign_message(self, message):
-        h = blake3.new(message)
-        signature = pkcs1_15.new(self.private_key).sign(h)
-        return signature
-
-    def verify_signature(self, message, signature, public_key):
-        h = SHA256.new(message)
-        try:
-            pkcs1_15.new(public_key).verify(h, signature)
-            return True
-        except (ValueError, TypeError):
-            return False
-
-    def signature_verification(self, block):
-        pass
-    
-    
-    '''
-
+        #if random.random() < selection_probability:
+        #    await self.create_block(all_nodes)
+        #else:
+        #    pass
