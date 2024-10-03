@@ -1,252 +1,288 @@
-# Decentralized Large Language Model Training with Blockchain Integration
+Decentralized Large Language Model Training with Blockchain Integration
+This repository contains the implementation of a decentralized architecture for training and deploying Large Language Models (LLMs) using blockchain technology. The system leverages federated learning techniques, hybrid consensus mechanisms, secure aggregation, and incentive mechanisms to enable collaborative, privacy-preserving, and robust model training across a network of nodes.
 
-This repository contains the implementation of a decentralized architecture for training and deploying Large Language Models (LLMs) using blockchain technology. The system leverages a hybrid consensus mechanism, secure aggregation techniques, and incentive mechanisms to enable collaborative, privacy-preserving, and robust model training across a network of nodes.
-
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Features](#features)
-- [Architecture Overview](#architecture-overview)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Usage](#usage)
-  - [Running the Simulation](#running-the-simulation)
-  - [Configuring Nodes](#configuring-nodes)
-  - [Data Preparation](#data-preparation)
-  - [Logging and Monitoring](#logging-and-monitoring)
-- [Code Structure](#code-structure)
-- [Components Description](#components-description)
-  - [Node Simulation](#node-simulation)
-  - [Local Training](#local-training)
-  - [Secure Aggregation](#secure-aggregation)
-  - [Consensus Mechanism](#consensus-mechanism)
-  - [Blockchain Structure](#blockchain-structure)
-  - [Attack Simulation](#attack-simulation)
-- [Results and Evaluation](#results-and-evaluation)
-- [Contributing](#contributing)
-- [License](#license)
-- [References](#references)
-
-## Introduction
-
+Table of Contents
+Introduction
+Features
+Architecture Overview
+Getting Started
+Prerequisites
+Installation
+Usage
+Running the Simulation
+Configuring Nodes
+Data Preparation
+Logging and Monitoring
+Code Structure
+Components Description
+Node Simulation
+Local Training
+Secure Aggregation
+Consensus Mechanisms
+Blockchain Structure
+Attack Simulation
+Performance Metrics
+Preventing Data Poisoning
+Hyperparameter Optimization
+Results and Evaluation
+Contributing
+License
+References
+Introduction
 This project demonstrates a decentralized approach to training LLMs by integrating federated learning techniques with blockchain technology. The system allows multiple nodes to collaboratively train an LLM while preserving data privacy and ensuring model integrity. The blockchain component provides a secure and transparent ledger for transactions, model updates, and consensus operations.
 
-## Features
-
-- **Decentralized Training**: Nodes train the model locally on their data and contribute encrypted updates to the global model.
-- **Hybrid Consensus Mechanism**: Combines Proof-of-Stake (PoS), Proof-of-Time (PoT) with Verifiable Delay Functions (VDFs), and minimal Proof-of-Work (PoW) for efficient and secure consensus.
-- **Secure Aggregation**: Uses homomorphic encryption (Paillier scheme) to aggregate model updates without exposing individual contributions.
-- **Privacy Preservation**: Implements differential privacy techniques to protect sensitive data.
-- **Incentive Mechanisms**: Introduces a native cryptocurrency (LinguaCoin) to reward nodes for participation and honest behavior.
-- **Robustness to Attacks**: Simulates malicious nodes performing model poisoning attacks and demonstrates the system's resilience.
-
-## Architecture Overview
-
+Features
+Decentralized Training: Nodes train the model locally on their data and contribute encrypted updates to the global model.
+Hybrid Consensus Mechanisms: Combines Proof-of-Stake (PoS), Proof-of-Time (PoT) with Verifiable Delay Functions (VDFs), and Proof-of-Work (PoW) for efficient and secure consensus.
+Secure Aggregation: Uses homomorphic encryption (via Pyfhel) to aggregate model updates without exposing individual contributions.
+Privacy Preservation: Implements differential privacy techniques and data sanitization to protect sensitive data.
+Incentive and Reputation Mechanisms: Introduces a reputation system and staking to reward honest nodes and penalize malicious ones.
+Robustness to Attacks: Simulates malicious nodes performing model poisoning, Sybil attacks, and demonstrates the system's resilience.
+Advanced Models: Integrates the LLaMA-2 model for state-of-the-art language understanding.
+Hyperparameter Optimization: Utilizes Optuna for automated hyperparameter tuning.
+Comprehensive Evaluation: Employs multiple performance metrics, including Accuracy, Perplexity, BLEU, F1 Score, and ROUGE.
+Architecture Overview
 The system consists of multiple components working together:
 
-- **Nodes**: Simulated participants with local data and computational resources.
-- **Aggregator**: Collects encrypted updates from nodes and performs secure aggregation.
-- **Consensus Mechanism**: Ensures agreement on the global model updates and blockchain state.
-- **Blockchain**: Stores transactions, data blocks, and version blocks securely.
-- **Large Language Model**: A smaller version of GPT-2 used for training and inference.
+Nodes: Simulated participants with local data and computational resources.
+Aggregator: Collects encrypted updates from nodes and performs secure aggregation.
+Consensus Mechanisms: Ensures agreement on the global model updates and blockchain state using PoS, PoW, and PoT.
+Blockchain: Stores transactions, data blocks, and version blocks securely.
+Large Language Model: Uses LLaMA-2 for training and inference.
+Attack Simulation: Introduces various attacks to test the system's robustness.
+Getting Started
+Prerequisites
+Python 3.7+
+PyTorch: For implementing and training the LLM.
+NumPy: For numerical computations.
+PyCryptodome: For cryptographic functions (RSA encryption).
+Pyfhel: For homomorphic encryption.
+NetworkX: For simulating network graphs.
+AsyncIO: For asynchronous communication.
+Multiprocessing: To simulate parallel operations.
+Scikit-learn: For utility functions and metrics.
+Matplotlib: For plotting results.
+Transformers: For the LLaMA-2 model (Hugging Face Transformers library).
+Datasets: For loading datasets like SuperGLUE.
+NLTK and Rouge: For evaluation metrics (BLEU, ROUGE).
+Optuna: For hyperparameter optimization.
+Installation
+Clone the Repository
 
-## Getting Started
+bash
+Copy code
+git clone https://github.com/yourusername/decentralized-llm-blockchain.git
+cd decentralized-llm-blockchain
+Create a Virtual Environment
 
-### Prerequisites
+bash
+Copy code
+python3 -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+Upgrade pip
 
-- **Python 3.7+**
-- **PyTorch**: For implementing and training the LLM.
-- **NumPy**: For numerical computations.
-- **PyCryptodome**: For cryptographic functions (Paillier encryption).
-- **NetworkX**: For simulating network graphs.
-- **AsyncIO**: For asynchronous communication.
-- **Multiprocessing**: To simulate parallel operations.
-- **Scikit-learn**: For utility functions and metrics.
-- **Matplotlib**: For plotting results.
-- **Transformers**: For the GPT-2 model (Hugging Face Transformers library).
+bash
+Copy code
+pip install --upgrade pip
+Install Dependencies
 
-### Installation
+Install all required libraries using pip.
 
-1. **Clone the Repository**
+bash
+Copy code
+pip install -r requirements.txt
+Contents of requirements.txt:
 
-   ```bash
-   git clone https://github.com/yourusername/decentralized-llm-blockchain.git
-   cd decentralized-llm-blockchain
-   ```
+text
+Copy code
+torch>=1.7.0
+numpy>=1.18.0
+pycryptodome>=3.9.8
+Pyfhel>=2.3.0
+networkx>=2.5
+scikit-learn>=0.23.0
+matplotlib>=3.2.0
+transformers>=4.0.0
+datasets>=1.1.0
+nltk>=3.5
+rouge-score
+optuna>=2.0.0
+sentencepiece
+Install Additional System Libraries
 
-2. **Create a Virtual Environment**
+Pyfhel requires GMP and NTL libraries.
 
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
+bash
+Copy code
+# For Ubuntu/Debian systems
+sudo apt-get install libgmp-dev libntl-dev
+Download NLTK Data
 
-3. **Install Dependencies**
+python
+Copy code
+import nltk
+nltk.download('punkt')
+Verify Installation
 
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-   **Contents of `requirements.txt`:**
-
-   ```text
-   torch
-   numpy
-   pycryptodome
-   networkx
-   scikit-learn
-   matplotlib
-   transformers
-   ```
-
-## Usage
-
-### Running the Simulation
-
+bash
+Copy code
+python -c "import torch; import numpy; import Pyfhel; import Crypto; import networkx; import sklearn; import matplotlib; import transformers; import datasets; import nltk; import rouge; import optuna; print('All libraries installed successfully.')"
+Usage
+Running the Simulation
 Execute the main script to run the simulation:
 
-```bash
+bash
+Copy code
 python main.py
-```
-
 This script initializes the nodes, sets up the aggregator, and orchestrates the training rounds.
 
-### Configuring Nodes
-
-- **Number of Nodes**: Adjust the `num_nodes` variable in `main.py` to change the network size.
-- **Malicious Nodes**: Set the percentage of malicious nodes by modifying the `is_malicious` flag assignment.
-
-### Data Preparation
-
-- **Dataset**: The simulation uses the WikiText-103 dataset.
-- **Data Partitioning**: The dataset is partitioned among nodes to simulate non-IID data distributions.
-
+Configuring Nodes
+Number of Nodes: Adjust the num_nodes variable in main.py to change the network size.
+Malicious Nodes: Set the percentage of malicious nodes by modifying the is_malicious flag assignment.
+Reputation System: Nodes start with a reputation score, which influences their selection probability in the consensus mechanisms.
+Data Preparation
+Dataset: The simulation uses the SuperGLUE benchmark datasets (e.g., BoolQ, RTE, CB).
+Data Partitioning: The dataset is partitioned among nodes based on tasks to simulate non-IID data distributions.
+Preprocessing: Includes data sanitization, outlier detection, duplicate removal, and text normalization.
 To prepare the data:
 
-1. **Download the Dataset**
+Load and Prepare Data
 
-   Use the `datasets` library or download manually.
+python
+Copy code
+from data_preparation import load_and_prepare_superglue
+train_data, validation_data, test_data = load_and_prepare_superglue()
+Split Data Among Nodes
 
-   ```python
-   from datasets import load_dataset
-   dataset = load_dataset('wikitext', 'wikitext-103-v1')
-   ```
+Implement the get_node_data(node_id) function to assign data to each node.
 
-2. **Partition the Data**
-
-   Implement the `get_node_data(node_id)` function to assign data to each node.
-
-### Logging and Monitoring
-
-- **Logging**: The system logs important events, errors, and performance metrics.
-- **Monitoring**: Use the logging output to monitor training progress and consensus operations.
-
-## Code Structure
-
-- **`main.py`**: Entry point of the simulation; initializes nodes and runs training rounds.
-- **`node.py`**: Contains the `Node` class definition.
-- **`aggregator.py`**: Contains the `Aggregator` class for secure aggregation.
-- **`blockchain.py`**: Simulates the blockchain structure.
-- **`models.py`**: Defines the LLM model architecture.
-- **`utils.py`**: Utility functions for data loading, evaluation, and cryptography.
-- **`config.py`**: Configuration parameters for easy adjustments.
-
-## Components Description
-
-### Node Simulation
-
+Logging and Monitoring
+Logging: The system logs important events, errors, and performance metrics.
+Monitoring: Use the logging output to monitor training progress, consensus operations, and attack simulations.
+Code Structure
+main.py: Entry point of the simulation; initializes nodes, runs training rounds, and integrates attack simulations.
+node.py: Contains the Node class definition, including local training, consensus participation, and reputation management.
+aggregator.py: Contains the Aggregator class for secure aggregation using homomorphic encryption.
+models.py: Defines the LLaMA-2 model architecture.
+data_preparation.py: Handles dataset loading, preprocessing, and partitioning.
+evaluation.py: Evaluates the global model using multiple performance metrics.
+consensus_mechanism.py: Implements the hybrid consensus protocols (PoS, PoW, PoT with VDFs).
+blockchain_structure.py: Simulates the blockchain structure.
+attack_simulation.py: Simulates malicious activities and attacks to test the system's robustness.
+config.py: Configuration parameters for easy adjustments.
+Components Description
+Node Simulation
 Each node simulates a participant with:
 
-- **Local Dataset**: Private data used for training.
-- **Local Model**: A copy of the global model.
-- **Cryptographic Keys**: For encryption and signing.
-- **Consensus Participation**: Methods for participating in block creation and validation.
+Local Dataset: Private data used for training.
+Local Model: A copy of the global LLaMA-2 model.
+Cryptographic Keys: For encryption and signing.
+Consensus Participation: Methods for participating in block creation and validation.
+Reputation Management: Nodes maintain a reputation score influencing their selection probability.
+Local Training
+Nodes perform local training using their datasets.
+Training parameters (learning rate, batch size, epochs) can be customized.
+Implements advanced training methods like learning rate scheduling and gradient clipping.
+Model updates are encrypted before being sent to the aggregator.
+Secure Aggregation
+The aggregator collects encrypted updates from all nodes.
+Uses homomorphic encryption (Pyfhel) to aggregate updates without decryption.
+Decrypts the aggregated update and updates the global model.
+Distributes the new global model to all nodes.
+Consensus Mechanisms
+Proof-of-Stake (PoS): Nodes are selected for block creation based on their stake and reputation.
+Proof-of-Time (PoT) with VDFs: Verifiable Delay Functions introduce time delays to ensure fairness.
+Proof-of-Work (PoW): Adds computational effort to deter spamming and ensure block validity.
+Blockchain Structure
+Simplified blockchain implementation for simulation.
+Blocks contain information about model updates, transactions, and previous block hashes.
+Nodes maintain a local copy of the blockchain.
+Implements digital signatures and block validation.
+Attack Simulation
+Model Poisoning: Malicious nodes manipulate their model updates to poison the global model.
+Sybil Attacks: Nodes create multiple identities to gain influence.
+Evasion Attacks: Malicious nodes provide misleading updates that are difficult to detect.
+Backdoor Attacks: Inject triggers into the model to produce incorrect outputs on specific inputs.
+The system demonstrates resilience by mitigating the impact of these attacks through robust aggregation and reputation management.
+Performance Metrics
+The system evaluates the global model using multiple performance metrics:
 
-### Local Training
+Accuracy: Percentage of correctly predicted tokens or labels.
+Perplexity: Measures how well the model predicts a sample.
+BLEU Score: Evaluates the quality of generated text against reference text.
+F1 Score: Harmonic mean of precision and recall.
+ROUGE Score: Measures overlap between predicted and reference summaries.
+Preventing Data Poisoning
+The system implements several methods to prevent data poisoning:
 
-- Nodes perform local training using their datasets.
-- Training parameters (learning rate, batch size) can be customized.
-- Model updates are encrypted before being sent to the aggregator.
+Data Validation and Sanitization: Validates the integrity and quality of the data.
+Outlier Detection: Detects and removes anomalous data points.
+Duplicate and Redundancy Removal: Eliminates duplicate entries.
+Text Preprocessing: Standardizes text inputs to reduce variability and remove unwanted content.
+Differential Privacy: Adds noise to the training process to protect individual data points.
+Adversarial Training: Incorporates adversarial examples to make the model robust against malicious inputs.
+Hyperparameter Optimization
+The project integrates Optuna for automated hyperparameter tuning:
 
-### Secure Aggregation
+Objective Function: Trains the model with a set of hyperparameters and returns the evaluation metric to be optimized.
+Optimization Process: Uses techniques like Bayesian optimization and pruning to efficiently search the hyperparameter space.
+Parallelization: Supports parallel execution of trials.
+Integration: Can be used per node or for the global model.
+Results and Evaluation
+Model Performance: Achieves competitive results on SuperGLUE tasks compared to centralized training.
+Scalability: Demonstrates good scalability with increasing numbers of nodes.
+Security: Shows robustness against malicious attacks and data privacy breaches.
+Efficiency: Maintains reasonable resource utilization and training times.
+Hyperparameter Optimization: Improves model performance through automated tuning.
+Refer to the results directory for detailed performance metrics, logs, and plots.
 
-- The aggregator collects encrypted updates from all nodes.
-- Uses homomorphic encryption (Paillier scheme) to aggregate updates without decryption.
-- Decrypts the aggregated update and updates the global model.
-- Distributes the new global model to all nodes.
-
-### Consensus Mechanism
-
-- **Proof-of-Stake (PoS)**: Nodes are selected for block creation based on their stake.
-- **Proof-of-Time (PoT)**: Verifiable Delay Functions (VDFs) introduce time delays to prevent manipulation.
-- **Minimal Proof-of-Work (PoW)**: Adds computational effort to deter spamming.
-
-### Blockchain Structure
-
-- Simplified blockchain implementation for simulation.
-- Blocks contain information about model updates, transactions, and previous block hashes.
-- Nodes maintain a local copy of the blockchain.
-
-### Attack Simulation
-
-- Malicious nodes perform model poisoning by manipulating their model updates.
-- The system demonstrates resilience by mitigating the impact of these attacks through robust aggregation.
-
-## Results and Evaluation
-
-- **Model Performance**: Achieves acceptable accuracy and perplexity compared to centralized training.
-- **Scalability**: Demonstrates good scalability with increasing numbers of nodes.
-- **Security**: Shows robustness against malicious attacks and data privacy breaches.
-- **Efficiency**: Maintains reasonable resource utilization and training times.
-
-Refer to the `results` directory for detailed performance metrics, logs, and plots.
-
-## Contributing
-
+Contributing
 Contributions are welcome! Please follow these steps:
 
-1. **Fork the Repository**
+Fork the Repository
 
-   Click on the "Fork" button at the top-right corner of this page.
+Click on the "Fork" button at the top-right corner of this page.
 
-2. **Clone Your Fork**
+Clone Your Fork
 
-   ```bash
-   git clone https://github.com/yourusername/decentralized-llm-blockchain.git
-   ```
+bash
+Copy code
+git clone https://github.com/yourusername/decentralized-llm-blockchain.git
+Create a Feature Branch
 
-3. **Create a Feature Branch**
+bash
+Copy code
+git checkout -b feature/your-feature-name
+Make Changes and Commit
 
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+bash
+Copy code
+git add .
+git commit -m "Add your message here"
+Push to Your Fork
 
-4. **Make Changes and Commit**
+bash
+Copy code
+git push origin feature/your-feature-name
+Create a Pull Request
 
-   ```bash
-   git add .
-   git commit -m "Add your message here"
-   ```
+Open a pull request from your fork's feature branch to the main repository's master branch.
 
-5. **Push to Your Fork**
+License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+References
+Please refer to the REFERENCES.md file for a list of academic papers and resources that inspired this project.
 
-6. **Create a Pull Request**
+Note: This code is for educational and research purposes. The simulation simplifies certain aspects of blockchain and cryptography for feasibility. For real-world applications, consider using production-grade libraries and frameworks, and ensure compliance with relevant laws and regulations.
 
-   Open a pull request from your fork's feature branch to the main repository's `master` branch.
+Acknowledgements
+LLaMA-2 Model: Facebook AI Research
+Optuna: Optuna GitHub Repository
+SuperGLUE Benchmark: SuperGLUE Dataset
+Pyfhel Library: Pyfhel GitHub Repository
+NLTK and Rouge: Libraries used for natural language processing and evaluation metrics.
+Contact
+For any questions or suggestions, feel free to open an issue or contact the project maintainer at your.email@example.com.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## References
-
-Please refer to the `REFERENCES.md` file for a list of academic papers and resources that inspired this project.
-
----
-
-**Note**: This code is for educational and research purposes. The simulation simplifies certain aspects of blockchain and cryptography for feasibility. For real-world applications, consider using production-grade libraries and frameworks, and ensure compliance with relevant laws and regulations.
+Let's build a decentralized and secure future for AI together!
