@@ -352,8 +352,7 @@ Please refer to the `REFERENCES.md` file for a list of academic papers and resou
 
 ## Contact
 
-For any questions or suggestions, feel free to open an issue or contact the project maintainer at [your.email@example.com](mailto:your.email@example.com).
+For any questions or suggestions, feel free to open an issue or contact the project maintainer at [kozgunov@mail.ru](mailto:kozgunovn@mail.ru).
 
 ---
 
-**Let's build a decentralized and secure future for AI together!**
