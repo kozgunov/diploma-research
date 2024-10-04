@@ -3,9 +3,11 @@ import random
 from node import Node
 from aggregator import Aggregator
 from models import LlamaModel
-from data_preparation import get_node_data, test_data_loader, load_and_prepare_glue, load_and_prepare_superglue
+from data_preparating import get_node_data, test_data_loader, load_and_prepare_data, load_and_prepare_glue, load_and_prepare_superglue
 from evaluation import evaluate_global_model
-from attack_simulation import Attacks_Simulation, model_poisoning_attack
+from attack_simulation import AttacksSimulation
+from blockchain_structure import Blockchain, Block
+
 
 print('the program started, libraries correctly installed')
 
