@@ -3,6 +3,8 @@ import copy
 from Pyfhel import Pyfhel, PyPtxt, PyCtxt
 import asyncio
 
+print('NOW, you are in aggregator.py')
+
 
 class Aggregator:
     def __init__(self, nodes):
@@ -21,12 +23,15 @@ class Aggregator:
             node.set_encryption_parameters(context_bytes, public_key_bytes)
         self.aggregation_event = asyncio.Event()  # event to completion of aggregation
 
+
     async def receive_updates(self, node_id, encrypted_updates):
+        print('NOW, you are in receive_updates in aggregator.py')
         self.encrypted_updates[node_id] = encrypted_updates
         if len(self.encrypted_updates) == len(self.nodes):  # if updates from all nodes received -> continue aggregation
             await self.aggregate_updates()
 
     async def aggregate_updates(self):  # aggregate encrypted updates from all nodes using homomorphic encryption.
+        print('NOW, you are in aggregate_updates in aggregator.py')
         aggregated_updates = {}
         num_nodes = len(self.nodes)
         param_names = self.encrypted_updates[next(iter(self.encrypted_updates))].keys()  # list with parameters' names
@@ -51,6 +56,7 @@ class Aggregator:
         self.aggregation_event.set()  # set the aggregation event
 
     def decrypt_updates(self, aggregated_updates):  # decrypt them using private keys
+        print('NOW, you are in decrypt_updates in aggregator.py')
         decrypted_updates = {}
         for name, encrypted_params in aggregated_updates.items():
             # decrypted = [self.nodes[0].private_key.decrypt(x) / len(self.nodes) for x in encrypted_params]
@@ -61,6 +67,7 @@ class Aggregator:
         return decrypted_updates
 
     def update_global_model(self, aggregated_updates):
+        print('NOW, you are in update_global_model in aggregator.py')
         global_state = self.model.state_dict()  # update the global model weight
         for name in aggregated_updates:  # update all parameters
             global_state[name] += aggregated_updates[name] / len(self.nodes)
@@ -68,6 +75,7 @@ class Aggregator:
         self.global_model_state = global_state  # update model
 
     async def wait_for_aggregation(self):  # until it will be finished...
+        print('NOW, you are in wait_for_aggregation in aggregator.py')
         await self.aggregation_event.wait()
         self.aggregation_event.clear()
 
