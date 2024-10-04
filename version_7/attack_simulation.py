@@ -1,3 +1,4 @@
+from transformers import LlamaTokenizer
 import main
 import copy
 import random
@@ -5,7 +6,6 @@ import torch
 import numpy as np
 import re
 from node import Node
-from data_preparation import tokenizer
 from torch.utils.data import DataLoader
 from torch import nn
 from opacus import PrivacyEngine
@@ -14,9 +14,7 @@ print('NOW, you are in attack_simulation.py')
 
 
 
-
-
-
+tokenizer = LlamaTokenizer.from_pretrained('facebook/llama-2-7b')
 
 
 class AttacksSimulation:
@@ -135,7 +133,7 @@ class AttacksSimulation:
 
     def adversarial_training(self, model, data_loader, optimizer, loss_fn): # trains the model using adversarial example
         print('NOW, you are in adversarial_training in attack_simulation.py')
-        for inputs, labels in data_loader: 
+        for inputs, labels in data_loader:
             inputs_adv = self.generate_adversarial_examples(inputs, labels, model) # generate adversarial examples
             combined_inputs = torch.cat([inputs, inputs_adv]) # combine original and adversarial inputs
             combined_labels = torch.cat([labels, labels])
@@ -145,7 +143,7 @@ class AttacksSimulation:
             loss.backward()
             optimizer.step()
 
-    def generate_adversarial_examples(self, inputs, labels, model): # generates adversarial example and implement adversarial example generation 
+    def generate_adversarial_examples(self, inputs, labels, model): # generates adversarial example and implement adversarial example generation
         print('NOW, you are in generate_adversarial_examples in attack_simulation.py')
         inputs_adv = inputs.clone().detach()
         inputs_adv.requires_grad = True
@@ -154,7 +152,7 @@ class AttacksSimulation:
         loss = nn.CrossEntropyLoss()(outputs.view(-1, outputs.size(-1)), labels.view(-1))
         model.zero_grad()
         loss.backward()
-        
+
         epsilon = 0.01
         perturbation = epsilon * inputs_adv.grad.sign() # apply perturbation
         inputs_adv = inputs_adv + perturbation
