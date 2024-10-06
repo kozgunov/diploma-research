@@ -1,9 +1,8 @@
 from torch.utils.data import Dataset, DataLoader
 import torch
 import torch.nn as nn
-from transformers import LlamaConfig, LlamaForCausalLM, LlamaTokenizer
+from transformers import LlamaForCausalLM, LlamaTokenizer
 import optuna
-import numpy as np
 
 print('NOW, you are  in models.py')
 
