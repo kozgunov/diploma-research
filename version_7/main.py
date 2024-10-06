@@ -53,7 +53,7 @@ async def main():
         node = Node(node_id=i, stake=stake, data=node_data, model=node_model, is_malicious=is_malicious) # created instance
         nodes.append(node)
         if node.is_malicious: # update node reputation based on its behavior
-            model_poisoning_attack(node)
+            AttacksSimulation(node)
             print(f" {i}-th node is appended. it's malicious node\n")
             node.update_reputations(node, 'malicious')
         elif not node.is_malicious:
@@ -62,10 +62,14 @@ async def main():
 
     aggregator = Aggregator(nodes)  # take aggregator from satisfying file
     print('Aggregator initialized.\n')
-    try:
-        epochs = calculate_epochs(num_nodes) # depends on amount of nodes
-    except:
-        epochs = 5  # may be stopped in advance
+    #try:
+    #    epochs = calculate_epochs(num_nodes) # depends on amount of nodes
+    #except:
+    epochs = 1  # may be stopped in advance
+
+    # Oliseenko advised to use solely 1 epoch for the post-training, and if it's not enough - work deeper with datasets
+
+    # also Oliseenko said that full training process better doing in main.py rather than in another files
 
     for epoch in range(epochs):
         print(f"--- Training epoch {epoch + 1}  started ---")
