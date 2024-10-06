@@ -1,8 +1,12 @@
 import torch
-from transformers import LlamaTokenizer, AutoTokenizer
+from transformers import LlamaTokenizer
 from datasets import load_dataset
 import nltk
 from nltk.tokenize import sent_tokenize
+
+# Oliseenko comment
+# here you can see how I loaded 3 datasets (wikitext, glue, superglue). if the evaluation of these datasets will be incomparable with actual results,
+# then we can find some datasets from medical or finance sphere in order to obtain better result NAMELY IN THIS SPHERE
 
 print('NOW, you are in data_preprocession.py')
 
