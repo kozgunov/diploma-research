@@ -18,7 +18,7 @@ def evaluate_global_model(model, test_loader):
     all_predictions = [tokens_to_words(seq) for seq in all_predictions]
     all_references = [[tokens_to_words(seq[0])] for seq in all_references]
     loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
-    
+
     with torch.no_grad():
         for inputs, labels in test_loader:
             # inputs = nn.utils.rnn.pad_sequence(inputs, batch_first=True, padding_value=0)
@@ -60,6 +60,9 @@ def evaluate_global_model(model, test_loader):
     rouge_scores = rouge.get_scores(all_predictions, all_references, avg=True)
 
     # return metrics as dictionary for outputs
+
+    # Oliseenko commented that it's better to apply metrics, which are recommended/published as the best for NAMELY THIS DATASET
+
     return \
     {
         'Accuracy': accuracy,
