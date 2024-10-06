@@ -11,7 +11,7 @@ from Pyfhel import Pyfhel
 
 print('NOW, you are in node.py')
 
-
+# less randomization in order to stabilize training of the model
 
 def compute_vdf(self, input_value): # computation of VDFs itself
     print('NOW, you are in compute_vdf in node.py')
