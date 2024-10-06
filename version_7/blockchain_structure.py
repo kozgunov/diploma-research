@@ -1,4 +1,3 @@
-import time
 from blake3 import blake3
 
 print('NOW, you are in blockchain_structure.py')
