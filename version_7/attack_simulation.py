@@ -1,5 +1,4 @@
 from transformers import LlamaTokenizer
-import main
 import copy
 import random
 import torch
