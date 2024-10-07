@@ -82,7 +82,7 @@ The system consists of multiple components working together:
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/decentralized-llm-blockchain.git
+   git clone https://github.com/kozgunov/diploma-research.git
    cd decentralized-llm-blockchain
    ```
 
@@ -121,7 +121,7 @@ The system consists of multiple components working together:
    datasets>=1.1.0
    nltk>=3.5
    rouge-score
-   optuna>=2.0.0
+   optuna>=3.0.0
    sentencepiece
    ```
 
@@ -253,11 +253,11 @@ Each node simulates a participant with:
 
 The system evaluates the global model using multiple performance metrics:
 
-- **Accuracy**: Percentage of correctly predicted tokens or labels.
-- **Perplexity**: Measures how well the model predicts a sample.
-- **BLEU Score**: Evaluates the quality of generated text against reference text.
-- **F1 Score**: Harmonic mean of precision and recall.
-- **ROUGE Score**: Measures overlap between predicted and reference summaries.
+- **Accuracy**: Results will appear later...
+- **Perplexity**: Results will appear later...
+- **BLEU Score**: Results will appear later...
+- **F1 Score**: Results will appear later...
+- **ROUGE Score**: Results will appear later...
 
 ## Preventing Data Poisoning
 
@@ -281,10 +281,10 @@ The project integrates **Optuna** for automated hyperparameter tuning:
 
 ## Results and Evaluation
 
-- **Model Performance**: Achieves competitive results on SuperGLUE tasks compared to centralized training.
-- **Scalability**: Demonstrates good scalability with increasing numbers of nodes.
-- **Security**: Shows robustness against malicious attacks and data privacy breaches.
-- **Efficiency**: Maintains reasonable resource utilization and training times.
+- **Model Performance**:Results will appear later...
+- **Scalability**: Results will appear later...
+- **Security**: Results will appear later...
+- **Efficiency**: Results will appear later...
 - **Hyperparameter Optimization**: Improves model performance through automated tuning.
 
 Refer to the `results` directory for detailed performance metrics, logs, and plots.
@@ -300,7 +300,7 @@ Contributions are welcome! Please follow these steps:
 2. **Clone Your Fork**
 
    ```bash
-   git clone https://github.com/yourusername/decentralized-llm-blockchain.git
+   git clone https://github.com/kozgunov/diploma-research.git
    ```
 
 3. **Create a Feature Branch**
