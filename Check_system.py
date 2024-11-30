@@ -12,6 +12,7 @@ def get_cpu_info():
     print(f"Min Frequency: {psutil.cpu_freq().min}Mhz")
     print(f"Current Frequency: {psutil.cpu_freq().current}Mhz")
     print(f"CPU Usage: {psutil.cpu_percent(interval=1)}%")
+    print("CPU information gathered successfully.")
 
 def get_memory_info():
     """Get memory information."""
@@ -21,6 +22,22 @@ def get_memory_info():
     print(f"Available Memory: {memory.available / (1024 ** 3):.2f} GB")
     print(f"Used Memory: {memory.used / (1024 ** 3):.2f} GB")
     print(f"Memory Usage: {memory.percent}%")
+    print("Memory information gathered successfully.")
+
+def check_model_memory_requirements():
+    """Check memory requirements for loading LLaMA 2.7B model."""
+    print("\n=== Checking Memory Requirements for LLaMA 2.7B Model ===")
+    model_memory_size = 2.7 * 4 / (1024 ** 2)  # in GB
+    additional_memory_factor = 2  # Estimate for activations and other overhead
+    total_memory_required = model_memory_size * additional_memory_factor
+    
+    print(f"Estimated memory required to load LLaMA 2.7B model: {total_memory_required:.2f} GB")
+    
+    memory = psutil.virtual_memory()
+    if memory.available < total_memory_required * (1024 ** 2):  # Convert GB to bytes
+        print("WARNING: Insufficient memory to load the LLaMA 2.7B model.")
+    else:
+        print("Sufficient memory available to load the LLaMA 2.7B model.")
 
 def get_swap_info():
     """Get swap memory information."""
@@ -75,6 +92,49 @@ def get_os_info():
     print(f"Architecture: {platform.architecture()[0]}")
     print(f"Processor: {platform.processor()}")
 
+def check_minimal_requirements():
+    """Check minimal requirements for running the system."""
+    print("\n=== Checking Minimal Requirements ===")
+    
+    # Check CPU
+    cpu_cores = psutil.cpu_count(logical=True)
+    if cpu_cores < 2:
+        print("WARNING: Minimum of 2 CPU cores is recommended.")
+    
+    # Check Memory
+    memory = psutil.virtual_memory()
+    if memory.total < 4 * (1024 ** 3):  # 4 GB
+        print("WARNING: Minimum of 4 GB RAM is required.")
+    
+    # Check Disk Space
+    print("\n=== Checking Disk Space ===")
+    partitions = psutil.disk_partitions()
+    total_free_space = 0
+    for partition in partitions:
+        try:
+            usage = psutil.disk_usage(partition.mountpoint)
+            total_free_space += usage.free
+            print(f"Partition {partition.mountpoint}: Free Space: {usage.free / (1024 ** 3):.2f} GB")
+        except PermissionError as e:
+            print(f"WARNING: Cannot access {partition.mountpoint}. {str(e)}")
+        except Exception as e:
+            print(f"ERROR: An error occurred while accessing {partition.mountpoint}. {str(e)}")
+    
+    if total_free_space < 50 * (1024 ** 3):  # 50 GB
+        print("WARNING: Minimum of 50 GB free disk space is required.")
+    
+    # Check Internet Connection
+    print("\n=== Checking Internet Connection ===")
+    try:
+        response = os.system("ping -c 1 google.com")  # For Linux/Mac
+        # response = os.system("ping -n 1 google.com")  # For Windows
+        if response != 0:
+            print("WARNING: Internet connection is not available.")
+        else:
+            print("Internet connection is available.")
+    except Exception as e:
+        print(f"ERROR: Could not check internet connection: {str(e)}")
+
 def main():
     """Main function to gather system information."""
     get_os_info()
@@ -83,6 +143,8 @@ def main():
     get_swap_info()
     get_disk_info()
     get_gpu_info()
+    check_minimal_requirements()  # Check minimal requirements
+    check_model_memory_requirements()  # Check memory requirements for LLaMA 2.7B model
 
 if __name__ == "__main__":
     main() 
