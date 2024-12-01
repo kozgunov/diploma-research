@@ -9,7 +9,7 @@ from torch import nn
 
 print('NOW, you are in attack_simulation.py')
 
-token = "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"
+token = "1.12.2024 (1:57)"
 tokenizer = LlamaTokenizer.from_pretrained('facebook/llama-2-7b', use_auth_token=token)
 
 class AttacksSimulation:
